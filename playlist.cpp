@@ -46,7 +46,7 @@ void Playlist::requestNext() {
 void Playlist::requestPrevious() {
     std::cout << "playlist: requestPrevious" << std::endl;
     index--;
-    if (index < 0) index = files.length();
+    if (index < 0) index = files.length() - 1;
     emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
     setIndex();
     std::cout << "playlist: now playing index " << index << ": " << files.value(index).toStdString() << std::endl;
