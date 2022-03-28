@@ -40,10 +40,11 @@ int main(int argc, char *argv[]) {
     QObject::connect(&controls, &Controls::pause, &player, &Player::pause);
     QObject::connect(&controls, &Controls::changeVolume, &player, &Player::setVolume);
 
-    // prev/next buttons -> playlist -> player
+    // prev/next/shuffle buttons -> playlist -> player
     QObject::connect(&controls, &Controls::next, &playlist, &Playlist::requestNext);
     QObject::connect(&controls, &Controls::previous, &playlist, &Playlist::requestPrevious);
     QObject::connect(&playlist, &Playlist::playlistUrl, &player, &Player::setSource);
+    QObject::connect(&controls, &Controls::shuffle, &playlist, &Playlist::requestShuffle);
 
     window.setLayout(&mainlayout);
     window.show();

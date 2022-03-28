@@ -8,29 +8,40 @@
 #include <QLabel>
 
 class Player : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit Player(QWidget *parent = nullptr);
 
 signals:
+
     void playbackStateChanged(QMediaPlayer::PlaybackState newState);
+
     void mediaStateChanged(QMediaPlayer::MediaStatus newState);
 
 private slots:
+
     void playbackStateBridge(QMediaPlayer::PlaybackState newState);
+
     void mediaStateBridge(QMediaPlayer::MediaStatus newState);
+
     void error(QMediaPlayer::Error error, const QString &errorString);
 
     void durationChanged(qint64 milliseconds);
+
     void positionChanged(qint64 milliseconds);
+
     void sliderReleased();
 
 public slots:
+
     void play();
+
     void pause();
+
     void setVolume(float volume);
-    void setSource(const QUrl& source);
+
+    void setSource(const QUrl &source);
 
 private:
     QMediaPlayer *player = nullptr;
@@ -38,6 +49,7 @@ private:
     qint64 media_duration;
     QSlider *media_slider = nullptr;
     QLabel *media_label = nullptr;
+
     void updateMediaLabel(qint64 position);
 };
 

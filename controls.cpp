@@ -7,7 +7,7 @@
 #include <QAudio>
 #include <QMediaPlayer>
 
-Controls::Controls(QWidget *parent): QWidget(parent) {
+Controls::Controls(QWidget *parent) : QWidget(parent) {
     playing = false;
     media - false;
     play_button = new QToolButton(this);
@@ -27,34 +27,41 @@ Controls::Controls(QWidget *parent): QWidget(parent) {
     volume_slider->setValue(75);
     connect(volume_slider, &QSlider::valueChanged, this, &Controls::volumeChanged);
 
+    shuffle_button = new QToolButton(this);
+//    shuffle_button->setIcon(style()->standardIcon(QStyle::Shuffle));
+    connect(shuffle_button, &QAbstractButton::clicked, this, &Controls::shuffleClicked);
+
     QBoxLayout *layout = new QHBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(previous_button);
     layout->addWidget(play_button);
     layout->addWidget(next_button);
     layout->addWidget(volume_slider);
+    layout->addWidget(shuffle_button);
     setLayout(layout);
 }
 
 void Controls::playbackStateChanged(QMediaPlayer::PlaybackState newState) {
     // stopped -> a new file got loaded -> set previous state
-    if (newState == 0 ) {
+    if (newState == 0) {
         if (playing) emit play();
         else emit pause();
     }
-    // playing -> set icon
+        // playing -> set icon
     else if (newState == 1) {
         play_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
     }
-    // paused -> set icon
+        // paused -> set icon
     else {
         play_button->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     }
 }
+
 void Controls::mediaStateChanged(QMediaPlayer::MediaStatus newState) {
     if (newState == 2) media = true; // media has been loaded
     else if (newState == 0) media = false; // no media
 }
+
 void Controls::playClicked() {
     if (!media) return;
     // not playing -> play
@@ -62,24 +69,33 @@ void Controls::playClicked() {
         std::cout << "controls: play" << std::endl;
         emit play();
     }
-    // playing -> pause
+        // playing -> pause
     else {
         std::cout << "controls: pause" << std::endl;
         emit pause();
     }
     playing = !playing;
 }
+
 void Controls::nextClicked() {
     if (!media) return;
     std::cout << "controls: next" << std::endl;
     emit next();
 }
+
 void Controls::previousClicked() {
     if (!media) return;
     std::cout << "controls: previous" << std::endl;
     emit previous();
 }
+
 void Controls::volumeChanged(int volume) {
     std::cout << "controls: volume: " << volume << std::endl;
-    emit changeVolume((float)volume / 100);
+    emit changeVolume((float) volume / 100);
+}
+
+void Controls::shuffleClicked() {
+    if (!media) return;
+    std::cout << "controls: shuffle" << std::endl;
+    emit shuffle();
 }

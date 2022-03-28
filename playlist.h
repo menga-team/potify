@@ -10,22 +10,30 @@
 #include <QListView>
 
 class Playlist : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit Playlist(QWidget *parent = nullptr);
 
 signals:
+
     void playlistUrl(QUrl file);
+
     void playlistName(QString name);
 
 private slots:
+
     void openPlaylist();
-    void listIndexChanged(const QModelIndex & index);
+
+    void listIndexChanged(const QModelIndex &index);
 
 public slots:
+
     void requestNext();
+
     void requestPrevious();
+
+    void requestShuffle();
 
 private:
     int index;
@@ -35,6 +43,7 @@ private:
     QLabel *playlist_label = nullptr;
     QPushButton *open_button = nullptr;
     QListView *playlist_view = nullptr;
+
     void setIndex();
 };
 
