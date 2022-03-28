@@ -8,10 +8,11 @@
 #include <QLabel>
 
 class Controls : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit Controls(QWidget *parent = nullptr);
+
     bool playing;
     bool media;
 
@@ -24,11 +25,13 @@ signals:
     void stop();
     void changeVolume(float volume);
 
-public slots:
+public
+    slots:
     void playbackStateChanged(QMediaPlayer::PlaybackState newState);
     void mediaStateChanged(QMediaPlayer::MediaStatus newState);
 
-private slots:
+private
+    slots:
     void playClicked();
     void nextClicked();
     void previousClicked();

@@ -10,7 +10,7 @@
 #include <QListView>
 
 class Playlist : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit Playlist(QWidget *parent = nullptr);
@@ -36,8 +36,8 @@ private:
     QLabel *playlist_label = nullptr;
     QPushButton *open_button = nullptr;
     QListView *playlist_view = nullptr;
+
     void setIndex();
-    void sendPlaylist();
 };
 
 #endif //POTIFY_PLAYLIST_H

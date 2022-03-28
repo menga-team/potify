@@ -11,13 +11,13 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    a.setWindowIcon(a.style()->standardIcon(QStyle::SP_MediaPlay));
+    QApplication::setWindowIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
 
     // main widget
     QWidget window = QWidget();
     QVBoxLayout mainlayout = QVBoxLayout();
     window.setWindowTitle("potify");
-    window.resize(400, 300);
+    window.resize(480, 320);
 
     // playlist
     Playlist playlist = Playlist();
@@ -50,5 +50,5 @@ int main(int argc, char *argv[]) {
     window.setLayout(&mainlayout);
     window.show();
 
-    return a.exec();
+    return QApplication::exec();
 }

@@ -8,7 +8,7 @@
 #include <QLabel>
 
 class Player : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit Player(QWidget *parent = nullptr);
@@ -35,9 +35,10 @@ public slots:
 private:
     QMediaPlayer *player = nullptr;
     QAudioOutput *audioOutput = nullptr;
-    qint64 media_duration;
+    qint64 media_duration{};
     QSlider *media_slider = nullptr;
     QLabel *media_label = nullptr;
+
     void updateMediaLabel(qint64 position);
 };
 

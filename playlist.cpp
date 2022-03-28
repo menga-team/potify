@@ -24,10 +24,14 @@ Playlist::Playlist(QWidget *parent) : QWidget(parent) {
     playlist_view->setEditTriggers(QListView::NoEditTriggers);
     files_model = new QStringListModel(this);
     playlist_view->setModel(files_model);
+
+    //TODO fix connection between playlist_view and playbackStateBridge/mediaStateChanged
     connect(playlist_view, &QListView::clicked, this, &Playlist::listIndexChanged);
 
-    QBoxLayout *layout = new QVBoxLayout;
-    QBoxLayout *topbar = new QHBoxLayout;
+    //TODO connect arrow key selection with signal/slot
+
+    QBoxLayout * layout = new QVBoxLayout;
+    QBoxLayout * topbar = new QHBoxLayout;
     topbar->addWidget(playlist_label);
     topbar->addWidget(open_button);
     layout->addLayout(topbar);
@@ -39,7 +43,8 @@ void Playlist::requestNext() {
     std::cout << "playlist: requestNext" << std::endl;
     index++;
     if (index >= files.length()) index = 0;
-    sendPlaylist();
+    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
+    setIndex();
     std::cout << "playlist: now playing index " << index << ": " << files.value(index).toStdString() << std::endl;
 }
 
@@ -47,7 +52,8 @@ void Playlist::requestPrevious() {
     std::cout << "playlist: requestPrevious" << std::endl;
     index--;
     if (index < 0) index = files.length() - 1;
-    sendPlaylist();
+    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
+    setIndex();
     std::cout << "playlist: now playing index " << index << ": " << files.value(index).toStdString() << std::endl;
 }
 
@@ -56,16 +62,21 @@ void Playlist::openPlaylist() {
     QString new_directory = QFileDialog::getExistingDirectory(this, "Select Playlist Directory");
     if (new_directory.isNull()) return;
     else directory = new_directory;
-    files = directory.entryList(QStringList() << "*.mp3" << "*.MP3" << "*.wav" << "*.WAV" << "*.m4a" << ".M4A" << "*.aac" << "* .AAC" << "*.flac" << "*.FLAC",QDir::Files);
-    foreach(QString filename, files) {std::cout << directory.absoluteFilePath(filename).toStdString() << std::endl;}
+    files = directory.entryList(QStringList() << "*.mp3" << "*.MP3" << "*.wav" << "*.WAV" << "*.m4a" << ".M4A" << "*.aac" << "* .AAC" << "*.flac" << "*.FLAC",
+                                QDir::Files);
+            foreach(QString
+                            filename, files) {
+            std::cout << directory.absoluteFilePath(filename).toStdString() << std::endl;
+        }
     files_model->setStringList(files);
     playlist_label->setText(directory.dirName());
-    sendPlaylist();
+    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
+    setIndex();
 }
 
 void Playlist::listIndexChanged(const QModelIndex &changed_index) {
     index = changed_index.row();
-    sendPlaylist();
+    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
 }
 
 void Playlist::setIndex() {
@@ -73,23 +84,19 @@ void Playlist::setIndex() {
     playlist_view->setCurrentIndex(_index);
 }
 
-void Playlist::sendPlaylist() {
-    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
-    setIndex();
-}
-
 void Playlist::requestShuffle() {
     std::cout << "playlist: requestShuffle" << std::endl;
 
-    // random gen
     std::random_device random;
     std::mt19937 mt(random());
     std::uniform_int_distribution<int> dist(0.0, files.length());
+
     std::cout << dist(mt) << std::endl;
     index = dist(mt);
 
     if (index >= files.length()) index = 0;
-    sendPlaylist();
+    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
+    setIndex();
 
     std::cout << "playlist: now playing index " << index << ": " << files.value(index).toStdString() << std::endl;
 }

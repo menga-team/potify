@@ -27,14 +27,14 @@ Controls::Controls(QWidget *parent) : QWidget(parent) {
 
     volume_slider = new QSlider(Qt::Horizontal, this);
     volume_slider->setRange(0, 100);
-    volume_slider->setValue(75);
+    volume_slider->setValue(10);
     connect(volume_slider, &QSlider::valueChanged, this, &Controls::volumeChanged);
 
     shuffle_button = new QToolButton(this);
     shuffle_button->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
     connect(shuffle_button, &QAbstractButton::clicked, this, &Controls::shuffleClicked);
 
-    QBoxLayout *layout = new QHBoxLayout;
+    QBoxLayout * layout = new QHBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(previous_button);
     layout->addWidget(play_button);
@@ -49,24 +49,22 @@ void Controls::playbackStateChanged(QMediaPlayer::PlaybackState newState) {
     // stopped
     if (newState == 0) {
         std::cout << "controls: playerStateChanged: stopped --> instruction " << instruction << std::endl;
-        // 0 -> the song is finished -> autoplay
-        if (instruction == 0) {if (shuffle_bool) emit shuffle(); else emit next();}
-        // 1 -> previous button -> previous song
+        // 0 -> the song is finished -> autoplay && 2 -> next button -> next song
+        if (instruction == 0 || instruction == 2) { if (shuffle_bool) emit shuffle(); else emit next(); }
+            // 1 -> previous button -> previous song
         else if (instruction == 1) emit previous();
-        // 2 -> next button -> next song
-        else if (instruction == 2) emit next();
         // reset instruction
         instruction = 0;
         // transfer play/pause state from previous song
         if (playing) emit play();
         else emit pause();
     }
-    // playing -> set icon
+        // playing -> set icon
     else if (newState == 1) {
         std::cout << "controls: playerStateChanged: playing" << std::endl;
         play_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
     }
-    // paused -> set icon
+        // paused -> set icon
     else {
         std::cout << "controls: playerStateChanged: paused" << std::endl;
         play_button->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
@@ -76,7 +74,7 @@ void Controls::playbackStateChanged(QMediaPlayer::PlaybackState newState) {
 void Controls::mediaStateChanged(QMediaPlayer::MediaStatus newState) {
     // media has been loaded
     if (newState == 2) media = true;
-    // no media
+        // no media
     else if (newState == 0) media = false;
 }
 
@@ -87,7 +85,7 @@ void Controls::playClicked() {
         std::cout << "controls: play" << std::endl;
         emit play();
     }
-    // playing -> pause
+        // playing -> pause
     else {
         std::cout << "controls: pause" << std::endl;
         emit pause();
