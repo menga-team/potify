@@ -35,12 +35,13 @@ int main(int argc, char *argv[]) {
     QObject::connect(&player, &Player::playbackStateChanged, &controls, &Controls::playbackStateChanged);
     QObject::connect(&player, &Player::mediaStateChanged, &controls, &Controls::mediaStateChanged);
 
-    // play/pause buttons & volume slider -> player
+    // play/pause buttons & volume slider & stop instruction -> player
     QObject::connect(&controls, &Controls::play, &player, &Player::play);
     QObject::connect(&controls, &Controls::pause, &player, &Player::pause);
+    QObject::connect(&controls, &Controls::stop, &player, &Player::stop);
     QObject::connect(&controls, &Controls::changeVolume, &player, &Player::setVolume);
 
-    // prev/next/shuffle buttons -> playlist -> player
+    // prev/next/shuffle instructions -> playlist -> player
     QObject::connect(&controls, &Controls::next, &playlist, &Playlist::requestNext);
     QObject::connect(&controls, &Controls::previous, &playlist, &Playlist::requestPrevious);
     QObject::connect(&playlist, &Playlist::playlistUrl, &player, &Player::setSource);
