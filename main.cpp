@@ -47,6 +47,10 @@ int main(int argc, char *argv[]) {
     QObject::connect(&playlist, &Playlist::playlistUrl, &player, &Player::setSource);
     QObject::connect(&controls, &Controls::shuffle, &playlist, &Playlist::requestShuffle);
 
+    // list clicked -> controls -> playlist -> player
+    QObject::connect(&playlist, &Playlist::listClicked, &controls, &Controls::listClicked);
+    QObject::connect(&controls, &Controls::specific, &playlist,&Playlist::requestSpecific);
+
     window.setLayout(&mainlayout);
     window.show();
 

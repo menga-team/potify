@@ -22,13 +22,14 @@ signals:
     void next();
     void previous();
     void shuffle();
+    void specific(int index);
     void stop();
     void changeVolume(float volume);
 
-public
-    slots:
+public slots:
     void playbackStateChanged(QMediaPlayer::PlaybackState newState);
     void mediaStateChanged(QMediaPlayer::MediaStatus newState);
+    void listClicked(int index);
 
 private
     slots:
@@ -46,6 +47,7 @@ private:
     QToolButton *shuffle_button = nullptr;
     bool shuffle_bool;
     int instruction;
+    int specific_index;
 };
 
 #endif // CONTROLS_H

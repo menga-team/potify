@@ -25,7 +25,6 @@ Playlist::Playlist(QWidget *parent) : QWidget(parent) {
     files_model = new QStringListModel(this);
     playlist_view->setModel(files_model);
 
-    //TODO fix connection between playlist_view and playbackStateBridge/mediaStateChanged
     connect(playlist_view, &QListView::clicked, this, &Playlist::listIndexChanged);
 
     //TODO connect arrow key selection with signal/slot
@@ -62,12 +61,8 @@ void Playlist::openPlaylist() {
     QString new_directory = QFileDialog::getExistingDirectory(this, "Select Playlist Directory");
     if (new_directory.isNull()) return;
     else directory = new_directory;
-    files = directory.entryList(QStringList() << "*.mp3" << "*.MP3" << "*.wav" << "*.WAV" << "*.m4a" << ".M4A" << "*.aac" << "* .AAC" << "*.flac" << "*.FLAC",
-                                QDir::Files);
-            foreach(QString
-                            filename, files) {
-            std::cout << directory.absoluteFilePath(filename).toStdString() << std::endl;
-        }
+    files = directory.entryList(QStringList() << "*.mp3" << "*.MP3" << "*.wav" << "*.WAV" << "*.m4a" << ".M4A" << "*.aac" << "* .AAC" << "*.flac" << "*.FLAC",QDir::Files);
+    foreach(QString filename, files) {std::cout << directory.absoluteFilePath(filename).toStdString() << std::endl;}
     files_model->setStringList(files);
     playlist_label->setText(directory.dirName());
     emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
@@ -76,7 +71,7 @@ void Playlist::openPlaylist() {
 
 void Playlist::listIndexChanged(const QModelIndex &changed_index) {
     index = changed_index.row();
-    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
+    emit listClicked(index);
 }
 
 void Playlist::setIndex() {
@@ -95,6 +90,15 @@ void Playlist::requestShuffle() {
     index = dist(mt);
 
     if (index >= files.length()) index = 0;
+    emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
+    setIndex();
+
+    std::cout << "playlist: now playing index " << index << ": " << files.value(index).toStdString() << std::endl;
+}
+
+void Playlist::requestSpecific(int specific_index) {
+    std::cout << "playlist: requestSpecific" << std::endl;
+    index = specific_index;
     emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
     setIndex();
 

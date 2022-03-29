@@ -18,6 +18,7 @@ public:
 signals:
     void playlistUrl(QUrl file);
     void playlistName(QString name);
+    void listClicked(int index);
 
 private slots:
     void openPlaylist();
@@ -27,6 +28,7 @@ public slots:
     void requestNext();
     void requestPrevious();
     void requestShuffle();
+    void requestSpecific(int specific_index);
 
 private:
     int index;

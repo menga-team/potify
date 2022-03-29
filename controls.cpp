@@ -12,6 +12,7 @@ Controls::Controls(QWidget *parent) : QWidget(parent) {
     media = false;
     shuffle_bool = false;
     instruction = 0;
+    specific_index = 0;
 
     play_button = new QToolButton(this);
     play_button->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
@@ -51,15 +52,16 @@ void Controls::playbackStateChanged(QMediaPlayer::PlaybackState newState) {
         std::cout << "controls: playerStateChanged: stopped --> instruction " << instruction << std::endl;
         // 0 -> the song is finished -> autoplay && 2 -> next button -> next song
         if (instruction == 0 || instruction == 2) { if (shuffle_bool) emit shuffle(); else emit next(); }
-            // 1 -> previous button -> previous song
+        // 1 -> previous button -> previous song
         else if (instruction == 1) emit previous();
+        else if (instruction == 3) emit specific(specific_index);
         // reset instruction
         instruction = 0;
         // transfer play/pause state from previous song
         if (playing) emit play();
         else emit pause();
     }
-        // playing -> set icon
+    // playing -> set icon
     else if (newState == 1) {
         std::cout << "controls: playerStateChanged: playing" << std::endl;
         play_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
@@ -117,4 +119,10 @@ void Controls::shuffleClicked() {
     else shuffle_button->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
     shuffle_bool = !shuffle_bool;
     std::cout << "controls: shuffle: " << shuffle_bool << std::endl;
+}
+
+void Controls::listClicked(int index) {
+    specific_index = index;
+    instruction = 3;
+    emit stop();
 }
