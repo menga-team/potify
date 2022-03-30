@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 
     // list clicked -> controls -> playlist -> player
     QObject::connect(&playlist, &Playlist::listClicked, &controls, &Controls::listClicked);
-    QObject::connect(&controls, &Controls::specific, &playlist,&Playlist::requestSpecific);
+    QObject::connect(&controls, &Controls::specific, &playlist, &Playlist::requestSpecific);
 
     window.setLayout(&mainlayout);
     window.show();

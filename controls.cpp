@@ -52,7 +52,7 @@ void Controls::playbackStateChanged(QMediaPlayer::PlaybackState newState) {
         std::cout << "controls: playerStateChanged: stopped --> instruction " << instruction << std::endl;
         // 0 -> the song is finished -> autoplay && 2 -> next button -> next song
         if (instruction == 0 || instruction == 2) { if (shuffle_bool) emit shuffle(); else emit next(); }
-        // 1 -> previous button -> previous song
+            // 1 -> previous button -> previous song
         else if (instruction == 1) emit previous();
         else if (instruction == 3) emit specific(specific_index);
         // reset instruction
@@ -61,7 +61,7 @@ void Controls::playbackStateChanged(QMediaPlayer::PlaybackState newState) {
         if (playing) emit play();
         else emit pause();
     }
-    // playing -> set icon
+        // playing -> set icon
     else if (newState == 1) {
         std::cout << "controls: playerStateChanged: playing" << std::endl;
         play_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));

@@ -61,8 +61,8 @@ void Playlist::openPlaylist() {
     QString new_directory = QFileDialog::getExistingDirectory(this, "Select Playlist Directory");
     if (new_directory.isNull()) return;
     else directory = new_directory;
-    files = directory.entryList(QStringList() << "*.mp3" << "*.MP3" << "*.wav" << "*.WAV" << "*.m4a" << ".M4A" << "*.aac" << "* .AAC" << "*.flac" << "*.FLAC",QDir::Files);
-    foreach(QString filename, files) {std::cout << directory.absoluteFilePath(filename).toStdString() << std::endl;}
+    files = directory.entryList(QStringList() << "*.mp3" << "*.MP3" << "*.wav" << "*.WAV" << "*.m4a" << ".M4A" << "*.aac" << "* .AAC" << "*.flac" << "*.FLAC" << "*.webm", QDir::Files);
+            foreach(QString filename, files) { std::cout << directory.absoluteFilePath(filename).toStdString() << std::endl; }
     files_model->setStringList(files);
     playlist_label->setText(directory.dirName());
     emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));

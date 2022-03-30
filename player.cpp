@@ -4,6 +4,7 @@
 #include <QMediaPlayer>
 #include <QAudioOutput>
 #include <QHBoxLayout>
+#include <iomanip>
 
 Player::Player(QWidget *parent) : QWidget(parent) {
     player = new QMediaPlayer();
@@ -15,7 +16,7 @@ Player::Player(QWidget *parent) : QWidget(parent) {
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &Player::mediaStateBridge);
 
     media_slider = new QSlider(Qt::Horizontal, this);
-    media_label = new QLabel("00:00 / 00:00");
+    media_label = new QLabel("00:00:00");
     connect(media_slider, &QSlider::sliderReleased, this, &Player::sliderReleased);
 
     connect(player, &QMediaPlayer::durationChanged, this, &Player::durationChanged);
@@ -85,5 +86,20 @@ void Player::sliderReleased() {
 }
 
 void Player::updateMediaLabel(qint64 position) {
-    media_label->setText(QString::number(position));
+
+    // format position to correct time format
+    auto s = static_cast<qint64>(position);
+    qint64 h = s / (60 * 60);
+    s -= h * (60 * 60);
+
+    qint64 m = s / (60);
+    s -= m * (60);
+
+    // write into stringstream, then convert to string --> QString
+    std::stringstream buffer;
+    std::string buffer2;
+
+    buffer << std::setfill('0') << std::setw(2) << h << ':' << std::setw(2) << m << ':' << std::setw(2) << s << std::endl;
+    buffer2 = buffer.str();
+    media_label->setText(QString::fromStdString(buffer2));
 }

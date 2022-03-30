@@ -40,6 +40,7 @@ private:
     QLabel *media_label = nullptr;
 
     void updateMediaLabel(qint64 position);
+
 };
 
 #endif // PLAYER_H
