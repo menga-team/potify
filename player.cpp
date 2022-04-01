@@ -16,7 +16,7 @@ Player::Player(QWidget *parent) : QWidget(parent) {
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &Player::mediaStateBridge);
 
     media_slider = new QSlider(Qt::Horizontal, this);
-    media_label = new QLabel("00:00:00");
+    media_label = new QLabel("--:--");
     connect(media_slider, &QSlider::sliderReleased, this, &Player::sliderReleased);
 
     connect(player, &QMediaPlayer::durationChanged, this, &Player::durationChanged);
@@ -70,36 +70,63 @@ void Player::error(QMediaPlayer::Error error, const QString &errorString) {
 // media slider
 void Player::durationChanged(qint64 milliseconds) {
     std::cout << "player: duration changed to " << milliseconds / 1000 << std::endl;
-    media_duration = milliseconds;
-    media_slider->setMaximum(media_duration / 1000);
+    media_duration = milliseconds / 1000;
+    media_slider->setMaximum((int) media_duration);
+    calculateMediaLabel(media_slider->value());
 }
 
 void Player::positionChanged(qint64 milliseconds) {
-    if (!media_slider->isSliderDown()) media_slider->setValue(milliseconds / 1000);
-    updateMediaLabel(milliseconds / 1000);
+    if (!media_slider->isSliderDown()) media_slider->setValue((int) milliseconds / 1000);
+    calculateMediaLabel(milliseconds / 1000);
 }
 
 void Player::sliderReleased() {
     std::cout << "player: released; new value: " << media_slider->value() << " seconds" << std::endl;
     player->setPosition(media_slider->value() * 1000);
-    updateMediaLabel(media_slider->value());
+    calculateMediaLabel(media_slider->value());
 }
 
-void Player::updateMediaLabel(qint64 position) {
+void Player::calculateMediaLabel(qint64 milliseconds) {
+    std::cout << "player: calculateMediaLabel " << std::endl;
 
-    // format position to correct time format
-    auto s = static_cast<qint64>(position);
-    qint64 h = s / (60 * 60);
-    s -= h * (60 * 60);
+    std::stringstream sCurrentTimeBuffer;
+    std::string currentTime;
+    std::stringstream sMaxTimeBuffer;
+    std::string totalTime;
 
-    qint64 m = s / (60);
-    s -= m * (60);
+    // format ms to correct time format
+    auto s1 = static_cast<qint64>(milliseconds);
+    qint64 h1 = s1 / (60 * 60);
+    s1 -= h1 * (60 * 60);
+    qint64 m1 = s1 / (60);
+    s1 -= m1 * (60);
 
-    // write into stringstream, then convert to string --> QString
-    std::stringstream buffer;
-    std::string buffer2;
+    // format max time to correct time format
+    auto s2 = static_cast<qint64>(media_duration);
+    qint64 h2 = s2 / (60 * 60);
+    s2 -= h2 * (60 * 60);
+    qint64 m2 = s2 / (60);
+    s2 -= m2 * (60);
 
-    buffer << std::setfill('0') << std::setw(2) << h << ':' << std::setw(2) << m << ':' << std::setw(2) << s << std::endl;
-    buffer2 = buffer.str();
-    media_label->setText(QString::fromStdString(buffer2));
+// With hours
+//    sCurrentTimeBuffer << std::setfill('0') << std::setw(2) << h1 << ':' << std::setw(2) << m1 << ':' << std::setw(2) << s1 << std::endl;
+//    currentTime = sCurrentTimeBuffer.str();
+//
+//    sMaxTimeBuffer << std::setfill('0') << std::setw(2) << h2 << ':' << std::setw(2) << m2 << ':' << std::setw(2) << s2 << std::endl;
+//    totalTime = sMaxTimeBuffer.str();
+
+    // Without hours
+    sCurrentTimeBuffer << std::setfill('0') << std::setw(2) << m1 << ':' << std::setw(2) << s1 << std::endl;
+    currentTime = sCurrentTimeBuffer.str();
+
+    sMaxTimeBuffer << std::setfill('0') << std::setw(2) << m2 << ':' << std::setw(2) << s2 << std::endl;
+    totalTime = sMaxTimeBuffer.str();
+
+    updateMediaLabel(currentTime, totalTime);
+}
+
+void Player::updateMediaLabel(const std::string &currentTime, const std::string &totalTime) {
+    std::cout << "player: updateMediaLabel; current  " << currentTime;
+    std::cout << "player: updateMediaLabel; total " << totalTime;
+    media_label->setText(QString::fromStdString(currentTime + " / " + totalTime));
 }

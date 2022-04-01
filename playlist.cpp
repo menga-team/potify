@@ -50,7 +50,7 @@ void Playlist::requestNext() {
 void Playlist::requestPrevious() {
     std::cout << "playlist: requestPrevious" << std::endl;
     index--;
-    if (index < 0) index = files.length() - 1;
+    if (index < 0) index = (int) files.length() - 1;
     emit playlistUrl(QUrl::fromLocalFile(directory.absoluteFilePath(files.value(index))));
     setIndex();
     std::cout << "playlist: now playing index " << index << ": " << files.value(index).toStdString() << std::endl;
@@ -84,7 +84,7 @@ void Playlist::requestShuffle() {
 
     std::random_device random;
     std::mt19937 mt(random());
-    std::uniform_int_distribution<int> dist(0.0, files.length());
+    std::uniform_int_distribution<int> dist(0.0, (int) files.length());
 
     std::cout << dist(mt) << std::endl;
     index = dist(mt);

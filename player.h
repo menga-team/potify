@@ -20,7 +20,7 @@ signals:
 private slots:
     void playbackStateBridge(QMediaPlayer::PlaybackState newState);
     void mediaStateBridge(QMediaPlayer::MediaStatus newState);
-    void error(QMediaPlayer::Error error, const QString &errorString);
+    static void error(QMediaPlayer::Error error, const QString &errorString);
     void durationChanged(qint64 milliseconds);
     void positionChanged(qint64 milliseconds);
     void sliderReleased();
@@ -39,7 +39,8 @@ private:
     QSlider *media_slider = nullptr;
     QLabel *media_label = nullptr;
 
-    void updateMediaLabel(qint64 position);
+    void calculateMediaLabel(qint64 milliseconds);
+    void updateMediaLabel(const std::string& currentTime, const std::string& totalTime);
 
 };
 
